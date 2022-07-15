@@ -32,7 +32,7 @@ const FurnitureForm = () => {
         })
 
         const json = await response.json()
-
+        console.log(json)
         if( !response.ok ){
             setError( json.error )
             setEmptyFields( json.emptyFields )

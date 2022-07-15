@@ -1,7 +1,8 @@
 const Furniture = require('../models/furniture');
-const ImageBasePath = require('../models/furniture');
+// const {ImageBasePath} = require('../models/furniture');
 const mongoose = require('mongoose');
 const sharp = require('sharp');
+const fs = require('fs');
 
 /*************************** */
 //get all furniture
@@ -39,15 +40,14 @@ module.exports.oneFurniture = async (req, res) => {
 
 //Create Furniture
 module.exports.createFurniture = async (req, res) => {
-    const { name, categoryID, description } = req.body;
-   
+    const { name, category, description } = req.body;
     let emptyFields = [];
 
     if(!name){
         emptyFields.push('name');
     }
-    if(!categoryID){
-        emptyFields.push('categoryID');
+    if(!category){
+        emptyFields.push('category');
     }
     if(!description){
         emptyFields.push('description');
@@ -63,23 +63,30 @@ module.exports.createFurniture = async (req, res) => {
 
     const file = req.files.file;
     const imageName = file.name;
-    console.log(req.files.file)
+    // console.log(req.files.file)
     // add Furniture to db
     try{ 
-     const furniture = await Furniture.create({ name, categoryID, description, imageName });
+     const furniture = await Furniture.create({ name, categoryID: category, description, imageName });
 
-     const path = ImageBasePath + imageName;
+     const path = 'public/uploads/' + imageName;
+     const after = 'public/images/' + imageName;
+     file.mv(after, (err) => {
+        if (err) {
+          return res.status(500).send(err);
+        }
+      });
 
-    //  sharp(path).resize(200,200)
-    // .jpeg({quality : 50})
-    // .toFile(path);
+     sharp(after).resize(200,200)
+    .jpeg({quality : 50})
+    .toFile(path)
+    //   // delete file after resize
+    // fs.unlink(after, function (err) {
+    //     if (err) throw err;
+    //     // if no error, file has been deleted successfully
+    //     console.log('File deleted!');
+    // });
    
-     file.mv(path, (err) => {
-       if (err) {
-         return res.status(500).send(err);
-       }
-       return res.send({ status: "success", path: path });
-     });
+     
 
      res.status(200).json(furniture);
     }catch(error){
