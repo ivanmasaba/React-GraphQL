@@ -1,4 +1,10 @@
 const graphql = require('graphql')
+
+const { GraphQLUpload } = require('apollo-upload-server');
+const path = require('path');
+const fs = require('fs')
+
+
 const Category = require('../models/Category')
 const Furniture = require('../models/furniture')
 const { GraphQLObjectType,
@@ -10,6 +16,14 @@ const { GraphQLObjectType,
 
 
 //define types of object to use
+
+const fileTYPE = new GraphQLObjectType({
+    name: 'file',
+    description: 'upload file',
+    fields: () => {
+        url: {type: GraphQLString}
+    }
+});
 
 // categories
 const categoryTYPE = new GraphQLObjectType({
@@ -91,7 +105,7 @@ const RootQuery = new GraphQLObjectType({
           /*********GET ONE Item********** */
           furnitureItem:{
             type: furnitureType,
-            description: 'Get single furniture item from db',
+            description: 'Get single furniture item from db', 
             args: {id: {type: GraphQLID}},
             resolve(parent, args){
                 return Furniture.findById(args.id)

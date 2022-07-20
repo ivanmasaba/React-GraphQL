@@ -1,19 +1,17 @@
 import React from "react";
-import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 require('file-loader?name[name].[ext]!../public/index.html');
-import './css/index.css';
 
 
 import App from "./App";
 
-import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
-import { createUploadLink } from 'apollo-upload-client'
+import { ApolloProvider, ApolloClient, InMemoryCache, } from '@apollo/client';
+import GetCategories from "./Components/GetCategories";
+import GetFurnitureItems from "./Components/GetFurnitureItems";
+import GetSingleCategory from "./Components/GetSingleCategory";
 
 const client = new ApolloClient({
-    link: createUploadLink({
-        uri: 'http://localhost:4000'
-    }),
+    uri: "http://localhost:4000",
     cache: new InMemoryCache(),
 })
 
@@ -25,7 +23,10 @@ const root = createRoot(rootElement);
 
 root.render(
     <ApolloProvider client={client} >
-            <App />
+        {/* <GetFurnitureItems /> */}
+        {/* <GetCategories /> */}
+        <GetSingleCategory />
+            {/* <App /> */}
     </ApolloProvider>
     
        
